@@ -13,53 +13,79 @@ import SwaminarayanDhaun3 from "../assets/Dhun/NonStopSwaminarayanDhunMahantSwam
 export const playlistTabs = {
   DailyRituals: [
     {
-      title: " Nididhyasan, Arti-Ashtak",
-      url: MorningAarti,
-      description: "Morning prayer offered to Bhagwan Swaminarayan. ",
-    },
-    {
-      title: "Nididhyasan",
+      title: "નિદીધ્યાસન",
       url: Nididhyasan,
-      description: "Devotional meditation and reflection.",
     },
     {
-      title: "Thal",
-      url: Thal,
-      description: "Offering of food to the deity. ",
+      title: "નિદીધ્યાસન, આરતી-અષ્ટક સવારે ",
+      url: MorningAarti,
     },
     {
-      title: "Nididhyasan, Arti-Ashtak",
+      title: "નિદીધ્યાસન, આરતી-અષ્ટક સાંજની",
       url: EveningAarti,
-      description: "Evening prayer with Arti and Ashtak.",
     },
     {
-      title: "Swaminarayan Dhun 1",
+      title: "સ્વામિનારાયણ ધૂન 1",
       url: BAPSSwaminarayanDhun1,
-      description: "Chanting the divine Swaminarayan mantra.",
     },
     {
-      title: "Swaminarayan Dhun 2",
-      url: BAPSSwaminarayanDhun2,
-      description: "Alternative version of the mantra chant.",
-    },
-    {
-      title: "Swaminarayan Dhun MahantSwami Maharaj",
+      title: "સ્વામિનારાયણ ધૂન મહંત સ્વામી મહારાજ",
       url: SwaminarayanDhaun3,
-      description: "Alternative version of the mantra chant.",
     },
     {
-      title: "Cheshta",
+      title: "ચેષ્ટા",
       url: cheshta,
-      description: "Song expressing devotion and dedication.",
+    },
+  ],
+  થાળ: [
+    {
+      title: "થાળ",
+      url: Thal,
     },
     {
-      title: "Tamari Murti Vina Mara Nath Re",
+      title: "થાળ",
+      url: Thal,
+    },
+  ],
+  કીર્તનો: [
+    {
+      title: "તમારી મૂર્તિ વિના મારાનાથ રે ",
       url: TamariMurtiVinaMaraNathRe,
-      description: "Kirtan of love for the Lord’s form.",
     },
     {
-      title: "Sardh Shatabdi Utsav Geet",
+      title: "સરધ શતાબ્દી ઉત્સવ ગીત",
       url: SardhShatabdiUtsavGeet,
+    },
+  ],
+  પ્રભાતીયા: [
+    {
+      title: "પ્રભાતીયા 1",
+      url: BAPSSwaminarayanDhun2,
+    },
+    {
+      title: "પ્રભાતીયા 2",
+      url: SwaminarayanDhaun3,
+    },
+  ],
+  કથા: [
+    {
+      title: "કથા  1",
+      url: BAPSSwaminarayanDhun2,
+    },
+    {
+      title: "કથા  2",
+      url: SwaminarayanDhaun3,
+    },
+  ],
+  સાધનસંગીત: [
+    {
+      title: "સાધનસંગીત  1",
+      url: Aarti,
+      description: "Song of praise and celebration.",
+    },
+    {
+      title: "સાધનસંગીત  2",
+      url: Aarti,
       description: "Song of praise and celebration.",
     },
   ],

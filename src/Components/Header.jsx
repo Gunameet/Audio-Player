@@ -31,28 +31,52 @@ function Header() {
                 align="middle"
                 justify="space-between"
                 className="px-4"
-                style={{ height: 62 }}
+            // style={{ height: 62 }}
             >
                 {/* Left side */}
                 <Col>
                     <div className="flex justify-start items-left">
                         {!isMobile && (
-                            <img
-                                src="https://www.baps.org/images/baps_logo.svg"
-                                alt="baps Logo"
-                                style={{ height: 50, paddingLeft: 10 }}
-                            />
+                            <Title
+                                level={3}
+                                style={{
+                                    color: "black",
+                                    fontWeight: "bold",
+                                    fontSize: 20,
+                                    paddingLeft: 10,
+                                    // height: 50
+                                }}
+                            >
+                                BAPS Swaminarayan Akshardham
+                            </Title>
+                            // <img
+                            //     src="https://www.baps.org/images/baps_logo.svg"
+                            //     alt="baps Logo"
+                            //     style={{ height: 50, paddingLeft: 10 }}
+                            // />
                         )}
 
                         {isMobile && (
-                            <img
-                                src="https://www.baps.org/images/baps_logo.svg"
-                                alt="baps Logo"
+                            // <img
+                            //     src="https://www.baps.org/images/baps_logo.svg"
+                            //     alt="baps Logo"
+                            //     style={{
+                            //         width: 300,
+                            //         height: 35,
+                            //     }}
+                            // />
+                            <Title
+                                level={3}
                                 style={{
-                                    width: 300,
-                                    height: 35,
+                                    color: "black",
+                                    fontWeight: "bold",
+                                    fontSize: 18,
+                                    paddingLeft: 10,
+                                    height: 30
                                 }}
-                            />
+                            >
+                                BAPS Swaminarayan Akshardham
+                            </Title>
                         )}
                     </div>
                 </Col>
