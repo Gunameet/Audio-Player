@@ -1,20 +1,27 @@
 import { useState } from "react";
-import { Card, Input, Button, Form, Divider } from "antd";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+
 import { Link, useNavigate } from "react-router-dom";
+
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/Components/ui/card";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
+import { Separator } from "@/Components/ui/separator";
 
 function LoginForm({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
     if (storedUser && storedUser.email === email && storedUser.password === password) {
       localStorage.setItem("auth", "true");
-      onLogin(email, password);
+      onLogin?.(email, password);
       navigate("/", { replace: true });
     } else {
       alert("Invalid email or password");
@@ -23,7 +30,7 @@ function LoginForm({ onLogin }) {
 
   return (
     <div
-      className="flex justify-center items-center min-h-screen w-screen overflow-hidden"
+      className="flex justify-center items-center min-h-screen w-screen p-4 sm:p-6"
       style={{
         backgroundImage:
           'url("https://www.baps.org/Data/Sites/1/Media/GalleryImages/33296/WebImages/2025_06_02_001_Kanad.jpg")',
@@ -32,57 +39,67 @@ function LoginForm({ onLogin }) {
         backgroundPosition: "center",
       }}
     >
-      <Card
-        className="w-96 p-6 rounded-2xl shadow-xl"
-        style={{ backgroundColor: "rgba(255, 255, 255, 0.85)" }}
-      >
-        <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
+      <Card className="w-full max-w-md rounded-2xl shadow-xl bg-white/90">
+        <CardHeader>
+          <CardTitle className="text-2xl sm:text-3xl font-bold text-center">Login</CardTitle>
+        </CardHeader>
 
-        {/* Google Login */}
-        <GoogleLogin
-          onSuccess={(credentialResponse) => {
-            const decoded = jwtDecode(credentialResponse.credential);
-            console.log("Google login:", decoded);
+        <CardContent className="flex flex-col gap-4 items-center">
+          <div className="flex justify-center w-full">
+            <GoogleLogin
+              onSuccess={(credentialResponse) => {
+                const decoded = jwtDecode(credentialResponse.credential);
+                console.log("Google login:", decoded);
 
-            localStorage.setItem("user", JSON.stringify(decoded));
-            localStorage.setItem("auth", "true");
-            navigate("/", { replace: true });
-          }}
-          onError={() => console.log("Google login failed")}
-        />
-
-        <Divider>Or login with</Divider>
-
-        <Form layout="vertical" onFinish={handleSubmit}>
-          <Form.Item label="Email">
-            <Input
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+                localStorage.setItem("user", JSON.stringify(decoded));
+                localStorage.setItem("auth", "true");
+                navigate("/", { replace: true });
+              }}
+              onError={() => console.log("Google login failed")}
             />
-          </Form.Item>
+          </div>
 
-          <Form.Item label="Password">
-            <Input.Password
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Form.Item>
+          <Separator className="my-2 w-full" />
 
-          <Form.Item>
-            <Button type="primary" block htmlType="submit">
+          <form onSubmit={handleSubmit} className="space-y-4 w-full">
+            <div className="flex flex-col space-y-1">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full"
+              />
+            </div>
+
+            <div className="flex flex-col space-y-1">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full"
+              />
+            </div>
+
+            <Button type="submit" className="w-full mt-2">
               Login
             </Button>
-          </Form.Item>
-        </Form>
-        {/* Signup link */}
-        <div className="text-center mt-4">
-          <span>Don’t have an account? </span>
-          <Link to="/signup" className="text-blue-600 font-semibold">
-            Create one
-          </Link>
-        </div>
+          </form>
+        </CardContent>
+
+        <CardFooter className="flex justify-center">
+          <p className="text-sm sm:text-base text-gray-600 text-center">
+            Don’t have an account?{" "}
+            <Link to="/signup" className="text-blue-600 font-semibold hover:underline">
+              Create one
+            </Link>
+          </p>
+        </CardFooter>
       </Card>
     </div>
   );

@@ -1,7 +1,11 @@
 import { useState } from "react";
-import { Card, Input, Button, Form, Divider } from "antd";
+import { Card } from "@/Components/ui/card";
+import { Input } from "@/Components/ui/input";
+import { Button } from "@/Components/ui/button";
+import { Label } from "@/Components/ui/label";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+
 import { Link, useNavigate } from "react-router-dom";
 
 function SignupForm() {
@@ -10,7 +14,8 @@ function SignupForm() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
         if (password !== confirmPassword) {
             alert("Passwords do not match!");
             return;
@@ -22,7 +27,7 @@ function SignupForm() {
 
     return (
         <div
-            className="flex justify-center items-center min-h-screen w-screen overflow-hidden"
+            className="flex justify-center items-center min-h-screen w-screen p-4"
             style={{
                 backgroundImage:
                     'url("https://www.baps.org/Data/Sites/1/Media/GalleryImages/33296/WebImages/2025_06_02_001_Kanad.jpg")',
@@ -31,62 +36,71 @@ function SignupForm() {
                 backgroundPosition: "center",
             }}
         >
-            <Card
-                className="w-96 p-6 rounded-2xl shadow-xl"
-                style={{ backgroundColor: "rgba(255, 255, 255, 0.85)" }}
-            >
-                <h2 className="text-2xl font-bold text-center mb-6">Create an Account</h2>
+            <Card className="w-full max-w-md p-6 rounded-2xl shadow-xl bg-white/80">
+                <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6">
+                    Create an Account
+                </h2>
 
                 {/* Google Signup */}
-                <GoogleLogin
-                    onSuccess={(credentialResponse) => {
-                        const decoded = jwtDecode(credentialResponse.credential);
-                        console.log("Google user:", decoded);
+                <div className="flex justify-center mb-4">
+                    <GoogleLogin
+                        onSuccess={(credentialResponse) => {
+                            const decoded = jwtDecode(credentialResponse.credential);
+                            console.log("Google user:", decoded);
 
-                        localStorage.setItem("user", JSON.stringify(decoded));
-                        localStorage.setItem("auth", "true");
-                        navigate("/", { replace: true });
-                    }}
-                    onError={() => console.log("Google signup failed")}
-                />
+                            localStorage.setItem("user", JSON.stringify(decoded));
+                            localStorage.setItem("auth", "true");
+                            navigate("/", { replace: true });
+                        }}
+                        onError={() => console.log("Google signup failed")}
+                    />
+                </div>
 
-                <Divider>Or continue with</Divider>
+                {/* <Divider className="my-4">Or continue with</Divider> */}
 
                 {/* Manual Email Signup */}
-                <Form layout="vertical" onFinish={handleSubmit}>
-                    <Form.Item label="Email">
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                    <div className="space-y-1">
+                        <Label htmlFor="email">Email</Label>
                         <Input
+                            id="email"
+                            type="email"
                             placeholder="Enter your email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
-                    </Form.Item>
+                    </div>
 
-                    <Form.Item label="Password">
-                        <Input.Password
+                    <div className="space-y-1">
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                            id="password"
+                            type="password"
                             placeholder="Enter password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                    </Form.Item>
+                    </div>
 
-                    <Form.Item label="Confirm Password">
-                        <Input.Password
+                    <div className="space-y-1">
+                        <Label htmlFor="confirmPassword">Confirm Password</Label>
+                        <Input
+                            id="confirmPassword"
+                            type="password"
                             placeholder="Re-enter password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
-                    </Form.Item>
+                    </div>
 
-                    <Form.Item>
-                        <Button type="primary" block htmlType="submit">
-                            Sign Up
-                        </Button>
-                    </Form.Item>
-                </Form>
-                {/* login link */}
+                    <Button type="submit" className="w-full mt-2">
+                        Sign Up
+                    </Button>
+                </form>
+
+                {/* Login Link */}
                 <div className="text-center mt-4">
-                    <span>You have an account? </span>
+                    <span>Already have an account? </span>
                     <Link to="/login" className="text-blue-600 font-semibold">
                         Login
                     </Link>

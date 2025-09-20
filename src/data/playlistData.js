@@ -10,6 +10,7 @@ import ShriSahajanandNamavaliPath from "../assets/Namavali/ShriSahajanandNamaval
 import TamariMurtiVinaMaraNathRe from "../assets/Kirtan/TamariMurtiVinaMaraNathRe.mp3";
 import SardhShatabdiUtsavGeet from "../assets/Kirtan/SardhShatabdiUtsavGeet.mp3";
 import SwaminarayanDhaun3 from "../assets/Dhun/NonStopSwaminarayanDhunMahantSwamiMaharaj.mp3";
+
 export const playlistTabs = {
   DailyRituals: [
     {

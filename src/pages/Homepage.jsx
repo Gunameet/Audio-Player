@@ -1,187 +1,171 @@
-import { useState, useRef, useEffect } from "react";
-import { Layout, Typography, Row, Col, Card, List, Breadcrumb } from "antd";
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import { playlistTabs } from "../data/playlistData";
-import Player from "../Components/Player.jsx";
+import { useState, useRef, useEffect } from "react"
+import { playlistTabs } from "../data/playlistData"
+import Player from "../Components/Player.jsx"
 
-const { Content } = Layout;
-const { Title, Text } = Typography;
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/Components/ui/accordion"
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card"
+import { TypographyH3, TypographyP } from "@/Components/ui/typography"
 
 export default function Homepage() {
-    const [currentCategory, setCurrentCategory] = useState("DailyRituals");
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isPlaying, setIsPlaying] = useState(true);
-    const [isMuted, setIsMuted] = useState(false);
-    const [MainCategories, setMainCategories] = useState({});
-    const audioRef = useRef(null);
+    const [currentCategory, setCurrentCategory] = useState("DailyRituals")
+    const [currentIndex, setCurrentIndex] = useState(0)
+    const [isPlaying, setIsPlaying] = useState(true)
+    const [isMuted, setIsMuted] = useState(false)
+    const [MainCategories, setMainCategories] = useState({})
+    const audioRef = useRef(null)
 
-    const categories = Object.keys(playlistTabs).filter(cat => cat !== "DailyRituals");
-    const currentTracks = playlistTabs[currentCategory];
+    const categories = Object.keys(playlistTabs).filter(
+        (cat) => cat !== "DailyRituals"
+    )
+    const currentTracks = playlistTabs[currentCategory]
 
-    const next = () => setCurrentIndex((prev) => (prev + 1) % currentTracks.length);
-    const prev = () => setCurrentIndex((prev) => (prev - 1 + currentTracks.length) % currentTracks.length);
+    const next = () =>
+        setCurrentIndex((prev) => (prev + 1) % currentTracks.length)
+    const prev = () =>
+        setCurrentIndex(
+            (prev) => (prev - 1 + currentTracks.length) % currentTracks.length
+        )
 
     const handlePlay = (seconds) => {
         if (audioRef.current) {
-            const newTime = audioRef.current.currentTime + seconds;
-            audioRef.current.currentTime = Math.min(Math.max(newTime, 0), audioRef.current.duration || 0);
+            const newTime = audioRef.current.currentTime + seconds
+            audioRef.current.currentTime = Math.min(
+                Math.max(newTime, 0),
+                audioRef.current.duration || 0
+            )
         }
-    };
+    }
 
     const handlePausePlay = () => {
         if (audioRef.current) {
             if (audioRef.current.paused) {
-                audioRef.current.play();
-                setIsPlaying(true);
+                audioRef.current.play()
+                setIsPlaying(true)
             } else {
-                audioRef.current.pause();
-                setIsPlaying(false);
+                audioRef.current.pause()
+                setIsPlaying(false)
             }
         }
-    };
+    }
 
     const handleReplay = () => {
         if (audioRef.current) {
-            audioRef.current.currentTime = 0;
-            audioRef.current.play();
-            setIsPlaying(true);
+            audioRef.current.currentTime = 0
+            audioRef.current.play()
+            setIsPlaying(true)
         }
-    };
+    }
 
     const handleMute = () => {
-        if (audioRef.current) audioRef.current.muted = !isMuted;
-        setIsMuted(!isMuted);
-    };
+        if (audioRef.current) audioRef.current.muted = !isMuted
+        setIsMuted(!isMuted)
+    }
 
     useEffect(() => {
         if (audioRef.current) {
             audioRef.current
                 .play()
                 .then(() => setIsPlaying(true))
-                .catch(() => setIsPlaying(false));
+                .catch(() => setIsPlaying(false))
         }
-    }, [currentCategory, currentIndex]);
+    }, [currentCategory, currentIndex])
 
     const TrackCard = ({ track, isActive, onClick }) => (
         <Card
-            hoverable
-            style={{
-                background: isActive ? "#fdfdfdff" : "#ffffff6b",
-                border: isActive ? "2px solid #1890ff" : "1px solid #f0f0f0",
-                borderRadius: 12,
-                borderBottom: isActive ? "4px solid #1890ff" : "3px solid #1890ff",
-                cursor: "pointer",
-                boxShadow: "0 6px 16px rgba(0,0,0,0.15)",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                height: 160,
-                width: "100%",
-                padding: 12,
-                fontWeight: "bold",
-                textAlign: "center",
-                wordBreak: "break-word",
-            }}
             onClick={onClick}
+            className={`cursor-pointer transition-all duration-200 ${isActive
+                ? "border-blue-500 bg-white shadow-lg"
+                : "border-gray-200 bg-gray-50"
+                }`}
         >
-            <Text style={{ fontSize: 18 }}>{track.title}</Text>
+            <CardContent className="flex items-center justify-center h-40 text-center">
+                <p
+                    className={`font-semibold text-lg ${isActive ? "text-blue-600" : "text-gray-800"
+                        }`}
+                >
+                    {track.title}
+                </p>
+            </CardContent>
         </Card>
-    );
+    )
 
     const toggleCategory = (category) => {
         setMainCategories((prev) => ({
             ...prev,
             [category]: !prev[category],
-        }));
-    };
+        }))
+    }
 
     return (
-        <Layout className="min-h-screen bg-gray-50">
-            <Title style={{ paddingTop: 62, color: "Highlight" }} level={3} className="text-center my-4 text-blue-600 font-bold">
-                દૈનિક ધાર્મિક વિધિઓ | નિદીધ્યાસન | આરતી-અષ્ટક | થાળ
-            </Title>
+        <div className="min-h-screen bg-gray-50">
+            <header className="pt-25 text-center">
+                <TypographyH3 className="text-blue-600 font-bold">
+                    દૈનિક ધાર્મિક વિધિઓ | નિદીધ્યાસન | આરતી-અષ્ટક | થાળ
+                </TypographyH3>
+            </header>
 
-            <Content className="p-6" style={{ paddingBottom: "180px" }}>
-                <Row gutter={[24, 16]} style={{ marginBottom: 40, marginLeft: 0, marginRight: 0 }}>
+            <main className="container mx-auto p-6 pb-44">
+                {/* Daily Rituals */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
                     {playlistTabs.DailyRituals.map((track, index) => (
-                        <Col key={index} xs={24} sm={12} md={8} lg={8}>
-                            <TrackCard
-                                track={track}
-                                isActive={currentCategory === "DailyRituals" && currentIndex === index}
-                                onClick={() => {
-                                    setCurrentCategory("DailyRituals");
-                                    setCurrentIndex(index);
-                                }}
-                            />
-                        </Col>
+                        <TrackCard
+                            key={index}
+                            track={track}
+                            isActive={currentCategory === "DailyRituals" && currentIndex === index}
+                            onClick={() => {
+                                setCurrentCategory("DailyRituals")
+                                setCurrentIndex(index)
+                            }}
+                        />
                     ))}
-                </Row>
+                </div>
 
-                <Row gutter={[24, 16]} style={{ marginLeft: 0, marginRight: 0 }} >
+                {/* Other Categories */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {categories.map((category) => (
-                        <Col key={category} xs={24} sm={24} md={8} lg={8}>
-                            <Card
-                                onClick={() => toggleCategory(category)}
-                                style={{
-                                    borderRadius: 12,
-                                    borderBottom: MainCategories[category] ? "4px solid #1890ff" : "3px solid #1890ff",
-                                    cursor: "pointer",
-                                    fontWeight: "bold",
-                                    boxShadow: "0 6px 16px rgba(0,0,0,0.15)",
-                                    transition: "0.3s",
-                                    background: MainCategories[category] ? "#f0f5ff" : "#fff",
-                                }}
-                                title={
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-                                        <div style={{ display: "flex", flexDirection: "column" }}>
-                                            <Text style={{ fontSize: 18 }} strong>{category}</Text>
-                                        </div>
-
-                                        {MainCategories[category] ? <UpOutlined /> : <DownOutlined />}
-                                    </div>
-                                }
-                            >
-                                {MainCategories[category] && (
-                                    <List
-                                        itemLayout="horizontal"
-                                        dataSource={playlistTabs[category]}
-                                        renderItem={(cat, index) => (
-                                            <List.Item
+                        <Accordion
+                            className="border border-gray-200 rounded-lg shadow-md p-4 "
+                            type="single"
+                            collapsible
+                            key={category}
+                            value={MainCategories[category] ? category : ""}
+                            onValueChange={() => toggleCategory(category)}
+                        >
+                            <AccordionItem value={category}>
+                                <AccordionTrigger className="text-lg font-semibold">
+                                    {category}
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                    <div className="flex flex-col gap-3">
+                                        {playlistTabs[category].map((track, index) => (
+                                            <Card
+                                                key={index}
                                                 onClick={() => {
-                                                    setCurrentCategory(category);
-                                                    setCurrentIndex(index);
+                                                    setCurrentCategory(category)
+                                                    setCurrentIndex(index)
                                                 }}
-                                                style={{
-                                                    cursor: "pointer",
-                                                    background:
-                                                        currentCategory === category && currentIndex === index
-                                                            ? "#c9ecfcff"
-                                                            : "#fff",
-                                                    borderRadius: 8,
-                                                    marginBottom: 4,
-                                                    paddingLeft: "10px",
-                                                    transition: "0.3s",
-                                                    height: "60px"
-                                                }}
+                                                className={`cursor-pointer px-4 py-3 transition-all ${currentCategory === category && currentIndex === index
+                                                    ? "bg-blue-100 border-blue-400"
+                                                    : "bg-white "
+                                                    }`}
                                             >
-                                                <List.Item.Meta
-                                                    title={
-                                                        <Text strong>
-                                                            {cat.title}
-                                                        </Text>
-                                                    }
-                                                />
-                                            </List.Item>
-                                        )}
-                                    />
-                                )}
-                            </Card>
-                        </Col>
+                                                <p className="font-medium">{track.title}</p>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                </AccordionContent>
+                            </AccordionItem>
+                        </Accordion>
                     ))}
-                </Row>
-            </Content>
+                </div>
+            </main>
 
+            {/* Bottom Player */}
             {currentTracks && currentTracks[currentIndex] && (
                 <Player
                     current={currentTracks[currentIndex]}
@@ -196,6 +180,6 @@ export default function Homepage() {
                     handleMute={handleMute}
                 />
             )}
-        </Layout>
-    );
+        </div>
+    )
 }
