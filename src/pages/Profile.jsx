@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/Components/ui/separator"
+import { useTranslation } from "react-i18next"
+import LanguageSelector from "@/Components/LangSelector"
 
 function Profile() {
+    const { t } = useTranslation()
     const [user, setUser] = useState(null)
     const navigate = useNavigate()
 
@@ -32,30 +35,27 @@ function Profile() {
             <Card className="w-full max-w-md rounded-2xl shadow-xl">
                 <CardHeader>
                     <CardTitle className="text-center text-2xl font-bold">
-                        My Profile
+                        {t("myProfile")}
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
-                    {/* {user.picture && (
-                        <img
-                            src={user.picture}
-                            alt="Profile"
-                            className="w-24 h-24 rounded-full mx-auto mb-4"
-                        />
-                    )} */}
+                    <p className="text-lg">
+                        <strong>{t("name")}:</strong> {user.name || t("notAvailable")}
+                    </p>
+                    <p className="text-lg">
+                        <strong>{t("email")}:</strong> {user.email || t("notAvailable")}
+                    </p>
 
-                    <p className="text-lg">
-                        <strong>Name:</strong> {user.name || "N/A"}
-                    </p>
-                    <p className="text-lg">
-                        <strong>Email:</strong> {user.email || "N/A"}
-                    </p>
+                    <div className="flex items-center justify-between mt-6">
+                        <span className="text-lg font-medium">{t("language")}</span>
+                        <LanguageSelector />
+                    </div>
 
                     <div className="mt-6 flex flex-col gap-3">
-                        <Button onClick={() => navigate("/")}>Back to Home</Button>
+                        <Button onClick={() => navigate("/")}>{t("backToHome")}</Button>
                         <Separator className="my-2" />
                         <Button variant="destructive" onClick={handleLogout}>
-                            Logout
+                            {t("logout")}
                         </Button>
                     </div>
                 </CardContent>

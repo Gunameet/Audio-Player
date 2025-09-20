@@ -4,11 +4,18 @@ import SignupForm from "./pages/SignupForm.jsx"
 import Header from "./Components/Header.jsx"
 import Homepage from "./pages/Homepage.jsx"
 import Profile from "./pages/Profile.jsx"
-import { AuthProvider, useAuth } from "./context/AuthContext.jsx"  // ✅ import context
-
-// Wrap routes with auth logic
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx"
+import { useEffect } from "react"
+import { useTranslation } from "react-i18next"
 function AppRoutes() {
+
+  const { t, i18n } = useTranslation()
   const { isLoggedIn } = useAuth()
+
+  useEffect(() => {
+    document.title = t("appTitle")
+  }, [i18n.language])
+
 
   return (
     <Routes>

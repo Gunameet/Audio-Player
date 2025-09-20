@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom"
 import { cn } from "@/lib/utils"
+import { useTranslation } from "react-i18next"
 
 function Navbar({ className, style }) {
+    const { t } = useTranslation()
     return (
         <nav
             className={cn(
@@ -15,7 +17,7 @@ function Navbar({ className, style }) {
                     to="/profile"
                     className="hover:text-blue-400 transition-colors duration-200"
                 >
-                    Profile
+                    {t("profile")}
                 </Link>
             </div>
         </nav>

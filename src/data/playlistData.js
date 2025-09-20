@@ -14,80 +14,78 @@ import SwaminarayanDhaun3 from "../assets/Dhun/NonStopSwaminarayanDhunMahantSwam
 export const playlistTabs = {
   DailyRituals: [
     {
-      title: "નિદીધ્યાસન",
+      title: "Nididhyasan",
       url: Nididhyasan,
     },
     {
-      title: "નિદીધ્યાસન, આરતી-અષ્ટક સવારે ",
+      title: "Nididhyasan & Morning Aarti-Ashtak",
       url: MorningAarti,
     },
     {
-      title: "નિદીધ્યાસન, આરતી-અષ્ટક સાંજની",
+      title: "Nididhyasan & Evening Aarti-Ashtak",
       url: EveningAarti,
     },
     {
-      title: "સ્વામિનારાયણ ધૂન 1",
+      title: "Swaminarayan Dhun 1",
       url: BAPSSwaminarayanDhun1,
     },
     {
-      title: "સ્વામિનારાયણ ધૂન મહંત સ્વામી મહારાજ",
+      title: "Swaminarayan Dhun - Mahant Swami Maharaj",
       url: SwaminarayanDhaun3,
     },
     {
-      title: "ચેષ્ટા",
+      title: "Cheshta",
       url: cheshta,
     },
   ],
-  થાળ: [
+  Thal: [
     {
-      title: "થાળ",
+      title: "Thal",
       url: Thal,
     },
     {
-      title: "થાળ",
+      title: "Thal",
       url: Thal,
     },
   ],
-  કીર્તનો: [
+  Kirtans: [
     {
-      title: "તમારી મૂર્તિ વિના મારાનાથ રે ",
+      title: "Tamari Murti Vina Mara Nath Re",
       url: TamariMurtiVinaMaraNathRe,
     },
     {
-      title: "સરધ શતાબ્દી ઉત્સવ ગીત",
+      title: "Sardh Shatabdi Utsav Geet",
       url: SardhShatabdiUtsavGeet,
     },
   ],
-  પ્રભાતીયા: [
+  Prabhatiya: [
     {
-      title: "પ્રભાતીયા 1",
+      title: "Prabhatiya 1",
       url: BAPSSwaminarayanDhun2,
     },
     {
-      title: "પ્રભાતીયા 2",
+      title: "Prabhatiya 2",
       url: SwaminarayanDhaun3,
     },
   ],
-  કથા: [
+  Katha: [
     {
-      title: "કથા  1",
+      title: "Katha 1",
       url: BAPSSwaminarayanDhun2,
     },
     {
-      title: "કથા  2",
+      title: "Katha 2",
       url: SwaminarayanDhaun3,
     },
   ],
-  સાધનસંગીત: [
+  DevotionalMusic: [
     {
-      title: "સાધનસંગીત  1",
+      title: "Devotional Music 1",
       url: Aarti,
-      description: "Song of praise and celebration.",
     },
     {
-      title: "સાધનસંગીત  2",
+      title: "Devotional Music 2",
       url: Aarti,
-      description: "Song of praise and celebration.",
     },
   ],
 };

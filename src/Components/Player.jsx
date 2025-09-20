@@ -17,6 +17,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/Components/ui/tooltip"
+import { useTranslation } from "react-i18next"
 
 function Player({
     current,
@@ -31,14 +32,16 @@ function Player({
     handleReplay,
     handleMute,
 }) {
+    const { t } = useTranslation()
+
     return (
         <Card
             className="fixed bottom-0 left-0 w-full border-t border-gray-300 bg-gray-100 shadow-md z-50"
-            style={{ height: "155px" }}
+
         >
             <CardContent className="flex flex-col items-center justify-center">
-                <h2 className="text-lg md:text-2xl lg:text-2xl font-semibold text-center sm:-pb-4 md:mt-2">
-                    {current.title}
+                <h2 className="text-lg pt-2 md:text-2xl lg:text-2xl font-semibold text-center sm:-pb-4 md:mt-2">
+                    {t(current.title)}
                 </h2>
 
                 {current.url ? (
@@ -53,7 +56,7 @@ function Player({
                         className="w-full max-w-md"
                     />
                 ) : (
-                    <p className="text-sm text-muted-foreground">No audio available</p>
+                    <p className="text-sm text-muted-foreground">{t("noAudio")}</p>
                 )}
 
                 <div className="flex flex-wrap justify-center gap-2 md:pb-2">
@@ -65,7 +68,7 @@ function Player({
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>{isMuted ? "Unmute" : "Mute"}</p>
+                                <p>{isMuted ? t("unmute") : t("mute")}</p>
                             </TooltipContent>
                         </Tooltip>
 
@@ -76,7 +79,7 @@ function Player({
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>Previous</p>
+                                <p>{t("previous")}</p>
                             </TooltipContent>
                         </Tooltip>
 
@@ -87,7 +90,7 @@ function Player({
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>10 sec Previous</p>
+                                <p>{t("prev10Sec")}</p>
                             </TooltipContent>
                         </Tooltip>
 
@@ -98,7 +101,7 @@ function Player({
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>{isPlaying ? "Pause" : "Play"}</p>
+                                <p>{isPlaying ? t("pause") : t("play")}</p>
                             </TooltipContent>
                         </Tooltip>
 
@@ -109,7 +112,7 @@ function Player({
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>10 sec Next</p>
+                                <p>{t("next10Sec")}</p>
                             </TooltipContent>
                         </Tooltip>
 
@@ -120,7 +123,7 @@ function Player({
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>Next</p>
+                                <p>{t("next")}</p>
                             </TooltipContent>
                         </Tooltip>
 
@@ -131,7 +134,7 @@ function Player({
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>Replay</p>
+                                <p>{t("replay")}</p>
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>

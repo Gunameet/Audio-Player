@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 import { playlistTabs } from "../data/playlistData"
 import Player from "../Components/Player.jsx"
+import { useTranslation } from "react-i18next"
 
 import {
     Accordion,
@@ -8,10 +9,11 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/Components/ui/accordion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card"
-import { TypographyH3, TypographyP } from "@/Components/ui/typography"
+import { Card, CardContent } from "@/Components/ui/card"
+import { TypographyH3 } from "@/Components/ui/typography"
 
 export default function Homepage() {
+    const { t } = useTranslation()
     const [currentCategory, setCurrentCategory] = useState("DailyRituals")
     const [currentIndex, setCurrentIndex] = useState(0)
     const [isPlaying, setIsPlaying] = useState(true)
@@ -88,7 +90,7 @@ export default function Homepage() {
                     className={`font-semibold text-lg ${isActive ? "text-blue-600" : "text-gray-800"
                         }`}
                 >
-                    {track.title}
+                    {t(track.title)}
                 </p>
             </CardContent>
         </Card>
@@ -105,7 +107,7 @@ export default function Homepage() {
         <div className="min-h-screen bg-gray-50">
             <header className="pt-25 text-center">
                 <TypographyH3 className="text-blue-600 font-bold">
-                    દૈનિક ધાર્મિક વિધિઓ | નિદીધ્યાસન | આરતી-અષ્ટક | થાળ
+                    {t("dailyRitualsHeader")}
                 </TypographyH3>
             </header>
 
@@ -138,7 +140,7 @@ export default function Homepage() {
                         >
                             <AccordionItem value={category}>
                                 <AccordionTrigger className="text-lg font-semibold">
-                                    {category}
+                                    {t(category)}
                                 </AccordionTrigger>
                                 <AccordionContent>
                                     <div className="flex flex-col gap-3">
@@ -154,7 +156,7 @@ export default function Homepage() {
                                                     : "bg-white "
                                                     }`}
                                             >
-                                                <p className="font-medium">{track.title}</p>
+                                                <p className="font-medium">{t(track.title)}</p>
                                             </Card>
                                         ))}
                                     </div>
