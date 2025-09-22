@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/Components/ui/separator"
 import { useTranslation } from "react-i18next"
 import LanguageSelector from "@/Components/LangSelector"
+import { useAuth } from "@/context/AuthContext"
 
 function Profile() {
     const { t } = useTranslation()
     const [user, setUser] = useState(null)
     const navigate = useNavigate()
+    const { logout } = useAuth()
 
     useEffect(() => {
         const auth = localStorage.getItem("auth")
@@ -23,9 +25,8 @@ function Profile() {
     }, [navigate])
 
     const handleLogout = () => {
-        localStorage.removeItem("auth")
-        localStorage.removeItem("user")
-        navigate("/login", { replace: true })
+        navigate("/login",)
+        logout()
     }
 
     if (!user) return null

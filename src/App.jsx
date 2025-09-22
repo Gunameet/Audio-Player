@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { useEffect } from "react"
+import { useTranslation } from "react-i18next"
 import LoginForm from "./pages/LoginForm.jsx"
-import SignupForm from "./pages/SignupForm.jsx"
 import Header from "./Components/Header.jsx"
 import Homepage from "./pages/Homepage.jsx"
 import Profile from "./pages/Profile.jsx"
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx"
-import { useEffect } from "react"
-import { useTranslation } from "react-i18next"
+import ProtectedRoute from "./Components/ProtectedRoute.jsx"
 function AppRoutes() {
 
   const { t, i18n } = useTranslation()
@@ -19,7 +19,11 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/" element={<Homepage />} />
+      <Route path="/" element={
+        <ProtectedRoute>
+          <Homepage />
+        </ProtectedRoute>
+      } />
 
       <Route
         path="/login"
@@ -27,16 +31,13 @@ function AppRoutes() {
       />
 
       <Route
-        path="/signup"
-        element={!isLoggedIn ? <SignupForm /> : <Navigate to="/" replace />}
-      />
-
-      <Route
         path="/profile"
-        element={isLoggedIn ? <Profile /> : <Navigate to="/login" replace />}
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
       />
-
-      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
