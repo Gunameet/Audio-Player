@@ -23,6 +23,7 @@ function Header() {
 
             <div className="flex items-center">
                 <h1 className="text-black font-bold sm:text-xl md:text-2xl">
+                    {/* BAPS Swaminarayan Akshardham */}
                     {t("appTitle")}
                 </h1>
             </div>
