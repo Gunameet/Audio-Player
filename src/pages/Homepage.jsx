@@ -128,7 +128,7 @@ export default function Homepage() {
                 </div>
 
                 {/* Other Categories */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
                     {categories.map((category) => (
                         <Accordion
                             className="border border-gray-200 rounded-lg shadow-md p-4 "
