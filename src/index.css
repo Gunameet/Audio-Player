@@ -84,6 +84,14 @@ html, body, #root {
   padding: 0;
 }
 
+.anek-gujarati {
+  font-family: "Anek Gujarati", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

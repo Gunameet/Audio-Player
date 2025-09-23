@@ -43,10 +43,6 @@ export const playlistTabs = {
       title: "Thal",
       url: Thal,
     },
-    {
-      title: "Thal",
-      url: Thal,
-    },
   ],
   Kirtans: [
     {
@@ -78,14 +74,14 @@ export const playlistTabs = {
       url: SwaminarayanDhaun3,
     },
   ],
-  DevotionalMusic: [
-    {
-      title: "Devotional Music 1",
-      url: Aarti,
-    },
-    {
-      title: "Devotional Music 2",
-      url: Aarti,
-    },
-  ],
+  // DevotionalMusic: [
+  //   {
+  //     title: "Devotional Music 1",
+  //     url: Aarti,
+  //   },
+  //   {
+  //     title: "Devotional Music 2",
+  //     url: Aarti,
+  //   },
+  // ],
 };

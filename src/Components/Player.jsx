@@ -8,6 +8,7 @@ import {
     RotateCcw,
     StepBack,
     StepForward,
+    Repeat,
 } from "lucide-react"
 import { Button } from "@/Components/ui/button"
 import { Card, CardContent } from "@/Components/ui/card"
@@ -24,13 +25,15 @@ function Player({
     audioRef,
     isPlaying,
     setIsPlaying,
-    isMuted,
+    // isMuted,
     next,
     prev,
     handlePlay,
     handlePausePlay,
     handleReplay,
-    handleMute,
+    // handleMute,
+    handleRepeted,
+    loop
 }) {
     const { t } = useTranslation()
 
@@ -39,7 +42,7 @@ function Player({
             className="fixed bottom-0 left-0 w-full border-t border-gray-300 bg-gray-100 shadow-md z-50"
 
         >
-            <CardContent className="flex flex-col items-center justify-center">
+            <CardContent className="flex flex-col items-center justify-center anek-gujarati">
                 <h2 className="text-lg pt-2 md:text-2xl lg:text-2xl font-semibold text-center sm:-pb-4 md:mt-2">
                     {t(current.title)}
                 </h2>
@@ -63,12 +66,16 @@ function Player({
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="outline" size="icon" onClick={handleMute}>
-                                    {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                                <Button
+                                    variant={loop ? "default" : "outline"}
+                                    size="icon"
+                                    onClick={handleRepeted}
+                                >
+                                    <Repeat className={`h-5 w-5 ${loop ? "text-green-500" : ""}`} />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>{isMuted ? t("unmute") : t("mute")}</p>
+                                <p>{loop ? t("RepeatOn") : t("RepeatOff")}</p>
                             </TooltipContent>
                         </Tooltip>
 

@@ -53,12 +53,12 @@ i18n
                     noAudio: "No audio available",
                     language: "Language",
                     menuTitle: "Menu",
+                    RepeatOn: "Repeat On",
+                    RepeatOff: "Repeat Off",
                 }
             },
             gu: {
                 translation: {
-                    // appTitle: "બીએપીએસ સ્વામિનારાયણ અક્ષરધામ",
-                    // profile: "પ્રોફાઇલ",
                     myProfile: "મારી પ્રોફાઇલ",
                     name: "નામ",
                     email: "ઇમેઇલ",
@@ -90,14 +90,16 @@ i18n
                     unmute: "મ્યુટ દૂર કરો",
                     previous: "પાછળ",
                     next: "આગળ",
-                    prev10Sec: "10 સેકન્ડ પાછું",
-                    next10Sec: "10 સેકન્ડ આગળ",
+                    prev10Sec: "૧૦ સેકન્ડ પાછું",
+                    next10Sec: "૧૦ સેકન્ડ આગળ",
                     play: "પ્લે",
                     pause: "વિરામ",
                     replay: "ફરીથી ચલાવો",
                     noAudio: "ઓડિયો ઉપલબ્ધ નથી",
                     language: "ભાષા",
                     menuTitle: "મેનુ",
+                    RepeatOn: "પુનરાવર્તન ચાલુ",
+                    RepeatOff: "પુનરાવર્તન બંધ",
                 }
             },
         },

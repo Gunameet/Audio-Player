@@ -19,6 +19,7 @@ export default function Homepage() {
     const [isPlaying, setIsPlaying] = useState(true)
     const [isMuted, setIsMuted] = useState(false)
     const [MainCategories, setMainCategories] = useState({})
+    const [loop, setLoop] = useState(false);
     const audioRef = useRef(null)
 
     const categories = Object.keys(playlistTabs).filter(
@@ -60,6 +61,13 @@ export default function Homepage() {
             audioRef.current.currentTime = 0
             audioRef.current.play()
             setIsPlaying(true)
+        }
+    }
+
+    const handleRepeted = () => {
+        setLoop((prev) => !prev);
+        if (audioRef.current) {
+            audioRef.current.loop = !loop
         }
     }
 
@@ -106,14 +114,14 @@ export default function Homepage() {
     return (
         <div className="min-h-screen bg-gray-50">
             <header className="pt-25 text-center">
-                <TypographyH3 className="text-blue-600 font-bold">
+                <TypographyH3 className="text-blue-600 anek-gujarati">
                     {t("dailyRitualsHeader")}
                 </TypographyH3>
             </header>
 
             <main className="container mx-auto p-6 pb-44">
                 {/* Daily Rituals */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12 anek-gujarati">
                     {playlistTabs.DailyRituals.map((track, index) => (
                         <TrackCard
                             key={index}
@@ -127,44 +135,35 @@ export default function Homepage() {
                     ))}
                 </div>
 
-                {/* Other Categories */}
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+                {/* Categories */}
+                <Accordion type="single" collapsible className="w-full space-y-4">
                     {categories.map((category) => (
-                        <Accordion
-                            className="border border-gray-200 rounded-lg shadow-md p-4 "
-                            type="single"
-                            collapsible
-                            key={category}
-                            value={MainCategories[category] ? category : ""}
-                            onValueChange={() => toggleCategory(category)}
-                        >
-                            <AccordionItem value={category}>
-                                <AccordionTrigger className="text-lg font-semibold">
-                                    {t(category)}
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                    <div className="flex flex-col gap-3">
-                                        {playlistTabs[category].map((track, index) => (
-                                            <Card
-                                                key={index}
-                                                onClick={() => {
-                                                    setCurrentCategory(category)
-                                                    setCurrentIndex(index)
-                                                }}
-                                                className={`cursor-pointer px-4 py-3 transition-all ${currentCategory === category && currentIndex === index
-                                                    ? "bg-blue-100 border-blue-400"
-                                                    : "bg-white "
-                                                    }`}
-                                            >
-                                                <p className="font-medium">{t(track.title)}</p>
-                                            </Card>
-                                        ))}
-                                    </div>
-                                </AccordionContent>
-                            </AccordionItem>
-                        </Accordion>
+                        <AccordionItem className="border border-gray-200 rounded-lg shadow-md p-4" key={category} value={category}>
+                            <AccordionTrigger className="text-lg font-semibold text-gray-700 anek-gujarati">
+                                {category}
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <div className="flex flex-col gap-3">
+                                    {playlistTabs[category].map((track, index) => (
+                                        <Card
+                                            key={index}
+                                            onClick={() => {
+                                                setCurrentCategory(category)
+                                                setCurrentIndex(index)
+                                            }}
+                                            className={`cursor-pointer px-4 py-3 transition-all ${currentCategory === category && currentIndex === index
+                                                ? "bg-blue-100 border-blue-400"
+                                                : "bg-white "
+                                                }`}
+                                        >
+                                            <p className=" anek-gujarati">{t(track.title)}</p>
+                                        </Card>
+                                    ))}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
                     ))}
-                </div>
+                </Accordion>
             </main>
 
             {/* Bottom Player */}
@@ -180,6 +179,8 @@ export default function Homepage() {
                     handlePausePlay={handlePausePlay}
                     handleReplay={handleReplay}
                     handleMute={handleMute}
+                    handleRepeted={handleRepeted}
+                    loop={loop}
                 />
             )}
         </div>

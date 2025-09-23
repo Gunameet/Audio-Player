@@ -35,11 +35,11 @@ function Profile() {
         <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
             <Card className="w-full max-w-md rounded-2xl shadow-xl">
                 <CardHeader>
-                    <CardTitle className="text-center text-2xl font-bold">
+                    <CardTitle className="text-center text-2xl font-bold anek-gujarati">
                         {t("myProfile")}
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="text-center">
+                <CardContent className="text-center anek-gujarati">
                     <p className="text-lg">
                         <strong>{t("name")}:</strong> {user.name || t("notAvailable")}
                     </p>
@@ -47,12 +47,12 @@ function Profile() {
                         <strong>{t("email")}:</strong> {user.email || t("notAvailable")}
                     </p>
 
-                    <div className="flex items-center justify-between mt-6">
+                    <div className="flex items-center justify-between mt-6 anek-gujarati">
                         <span className="text-lg font-medium">{t("language")}</span>
                         <LanguageSelector />
                     </div>
 
-                    <div className="mt-6 flex flex-col gap-3">
+                    <div className="mt-6 flex flex-col gap-3 anek-gujarati">
                         <Button onClick={() => navigate("/")}>{t("backToHome")}</Button>
                         <Separator className="my-2" />
                         <Button variant="destructive" onClick={handleLogout}>
