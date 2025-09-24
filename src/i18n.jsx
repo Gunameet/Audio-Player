@@ -79,7 +79,7 @@ i18n
                     "Swaminarayan Dhun - Mahant Swami Maharaj": "સ્વામિનારાયણ ધૂન મહંત સ્વામી મહારાજ",
                     Cheshta: "ચેષ્ટા",
                     "Tamari Murti Vina Mara Nath Re": "તમારી મૂર્તિ વિના મારાનાથ રે",
-                    "Sardh Shatabdi Utsav Geet": "સરધ શતાબ્દી ઉત્સવ ગીત",
+                    "Sardh Shatabdi Utsav Geet": "સાર્ધ શતાબ્દી ઉત્સવ ગીત",
                     "Prabhatiya 1": "પ્રભાતીયા 1",
                     "Prabhatiya 2": "પ્રભાતીયા 2",
                     "Katha 1": "કથા 1",
