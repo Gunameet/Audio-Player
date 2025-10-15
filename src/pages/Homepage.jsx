@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from "react"
-import { playlistTabs } from "../data/playlistData"
+import { useState, useRef, useEffect, useCallback } from "react"
 import Player from "../Components/Player.jsx"
 import { useTranslation } from "react-i18next"
+import axios from "axios"
+// import { io } from "socket.io-client"
 
 import {
     Accordion,
@@ -18,21 +19,24 @@ export default function Homepage() {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [isPlaying, setIsPlaying] = useState(true)
     const [isMuted, setIsMuted] = useState(false)
-    const [MainCategories, setMainCategories] = useState({})
-    const [loop, setLoop] = useState(false);
+    const [loop, setLoop] = useState(false)
+    const [playlistTabs, setPlaylistTabs] = useState({})
     const audioRef = useRef(null)
+    // const socketRef = useRef(null)
 
-    const categories = Object.keys(playlistTabs).filter(
-        (cat) => cat !== "DailyRituals"
-    )
-    const currentTracks = playlistTabs[currentCategory]
+    const next = useCallback(() => {
+        const currentTracks = playlistTabs[currentCategory] || []
+        if (currentTracks.length > 0) {
+            setCurrentIndex((prev) => (prev + 1) % currentTracks.length)
+        }
+    }, [playlistTabs, currentCategory])
 
-    const next = () =>
-        setCurrentIndex((prev) => (prev + 1) % currentTracks.length)
-    const prev = () =>
-        setCurrentIndex(
-            (prev) => (prev - 1 + currentTracks.length) % currentTracks.length
-        )
+    const prev = useCallback(() => {
+        const currentTracks = playlistTabs[currentCategory] || []
+        if (currentTracks.length > 0) {
+            setCurrentIndex((prev) => (prev - 1 + currentTracks.length) % currentTracks.length)
+        }
+    }, [playlistTabs, currentCategory])
 
     const handlePlay = (seconds) => {
         if (audioRef.current) {
@@ -64,17 +68,34 @@ export default function Homepage() {
         }
     }
 
-    const handleRepeted = () => {
-        setLoop((prev) => !prev);
-        if (audioRef.current) {
-            audioRef.current.loop = !loop
-        }
-    }
+    const handleRepeted = useCallback(() => {
+        setLoop((prev) => {
+            const newVal = !prev
+            if (audioRef.current) audioRef.current.loop = newVal
+            return newVal
+        })
+    }, [])
 
-    const handleMute = () => {
-        if (audioRef.current) audioRef.current.muted = !isMuted
-        setIsMuted(!isMuted)
-    }
+    const handleMute = useCallback(() => {
+        setIsMuted((prev) => {
+            const newVal = !prev
+            if (audioRef.current) audioRef.current.muted = newVal
+            return newVal
+        })
+    }, [])
+
+    useEffect(() => {
+        const fetchAudioData = async () => {
+            try {
+                const res = await axios.get("http://localhost:5000/api/audio")
+                const data = res.data && res.data.grouped ? res.data.grouped : res.data
+                setPlaylistTabs(data || {})
+            } catch (err) {
+                console.error("Error fetching audio list:", err)
+            }
+        }
+        fetchAudioData()
+    }, [])
 
     useEffect(() => {
         if (audioRef.current) {
@@ -84,6 +105,44 @@ export default function Homepage() {
                 .catch(() => setIsPlaying(false))
         }
     }, [currentCategory, currentIndex])
+
+    // Only include keys whose value is an array (safeguard against non-array values)
+    const categories = Object.keys(playlistTabs).filter((cat) => {
+        if (cat === "DailyRituals") return false
+        const val = playlistTabs[cat]
+        return Array.isArray(val)
+    })
+    const currentTracks = playlistTabs[currentCategory] || []
+
+    // useEffect(() => {
+    //     socketRef.current = io("http://localhost:5000", { transports: ["websocket"] });
+
+    //     socketRef.current.on("connect", () => console.log("Socket connected:", socketRef.current.id));
+
+    //     socketRef.current.on("control", (cmd) => {
+    //         if (!cmd?.action) return;
+    //         const { action, value } = cmd;
+
+    //         switch (action) {
+    //             case "play": audioRef.current?.play(); setIsPlaying(true); break;
+    //             case "pause": audioRef.current?.pause(); setIsPlaying(false); break;
+    //             case "next": next(); break;
+    //             case "prev": prev(); break;
+    //             case "seek": handlePlay(Number(value) || 0); break;
+    //             case "mute": handleMute(); break;
+    //             case "replay": handleReplay(); break;
+    //             case "toggleLoop": handleRepeted(); break;
+    //             case "setIndex": if (typeof value === "number") setCurrentIndex(value); break;
+    //             case "setCategory": if (typeof value === "string") setCurrentCategory(value); break;
+    //             default: console.warn("Unknown control action:", action);
+    //         }
+    //     });
+
+    //     return () => {
+    //         socketRef.current?.disconnect();
+    //     };
+    // }, [next, prev, handleMute, handleRepeted]);
+
 
     const TrackCard = ({ track, isActive, onClick }) => (
         <Card
@@ -98,18 +157,18 @@ export default function Homepage() {
                     className={`font-semibold text-lg ${isActive ? "text-blue-600" : "text-gray-800"
                         }`}
                 >
-                    {t(track.title)}
+                    {track.title}
                 </p>
             </CardContent>
         </Card>
     )
 
-    const toggleCategory = (category) => {
-        setMainCategories((prev) => ({
-            ...prev,
-            [category]: !prev[category],
-        }))
-    }
+    // const toggleCategory = (category) => {
+    //     setMainCategories((prev) => ({
+    //         ...prev,
+    //         [category]: !prev[category],
+    //     }))
+    // }
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -122,7 +181,7 @@ export default function Homepage() {
             <main className="container mx-auto p-6 pb-44">
                 {/* Daily Rituals */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12 anek-gujarati">
-                    {playlistTabs.DailyRituals.map((track, index) => (
+                    {(playlistTabs.DailyRituals || []).map((track, index) => (
                         <TrackCard
                             key={index}
                             track={track}
@@ -138,13 +197,17 @@ export default function Homepage() {
                 {/* Categories */}
                 <Accordion type="single" collapsible className="w-full space-y-4">
                     {categories.map((category) => (
-                        <AccordionItem className="border border-gray-200 rounded-lg shadow-md p-4" key={category} value={category}>
+                        <AccordionItem
+                            className="border border-gray-200 rounded-lg shadow-md p-4"
+                            key={category}
+                            value={category}
+                        >
                             <AccordionTrigger className="text-lg font-semibold text-gray-700 anek-gujarati">
                                 {category}
                             </AccordionTrigger>
                             <AccordionContent>
                                 <div className="flex flex-col gap-3">
-                                    {playlistTabs[category].map((track, index) => (
+                                    {(playlistTabs[category] || []).map((track, index) => (
                                         <Card
                                             key={index}
                                             onClick={() => {
@@ -156,7 +219,7 @@ export default function Homepage() {
                                                 : "bg-white "
                                                 }`}
                                         >
-                                            <p className=" anek-gujarati">{t(track.title)}</p>
+                                            <p className=" anek-gujarati">{track.title}</p>
                                         </Card>
                                     ))}
                                 </div>
@@ -172,6 +235,7 @@ export default function Homepage() {
                     current={currentTracks[currentIndex]}
                     audioRef={audioRef}
                     isPlaying={isPlaying}
+                    setIsPlaying={setIsPlaying}
                     isMuted={isMuted}
                     next={next}
                     prev={prev}

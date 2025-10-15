@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Separator } from "@/Components/ui/separator";
@@ -12,26 +13,62 @@ import { useAuth } from "@/context/AuthContext";
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  // const [role, setRole] = useState("user");
   const navigate = useNavigate();
-  const { login, STATIC_USER } = useAuth();
+  const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    if (email === STATIC_USER.email && password === STATIC_USER.password) {
-      login(STATIC_USER);
-      navigate("/", { replace: true });
+    if (!email.trim() || !password.trim()) {
+      setError("Please enter both email and password");
       return;
     }
 
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser && storedUser.email === email && storedUser.password === password) {
-      login(storedUser);
-      navigate("/", { replace: true });
-      return;
-    }
+    setIsLoading(true);
 
-    alert("Invalid email or password");
+    try {
+      console.log("Attempting to login via API...");
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      console.log("Login response status:", response.status);
+      const data = await response.json();
+      console.log("Login response data:", data);
+
+      if (response.ok) {
+        const role = data.user?.role?.toLowerCase() || "user";
+
+        const userData = {
+          ...data.user,
+          token: data.token,
+        };
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(userData));
+
+        login(userData);
+
+        navigate(role === "admin" ? "/admin" : "/", { replace: true });
+      } else {
+        setError(data.message || "Invalid email or password");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      if (error.name === "TypeError" && error.message.includes("Failed to fetch")) {
+        setError("Cannot connect to server. Please ensure your backend is running.");
+      } else {
+        setError("Network error. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -50,22 +87,58 @@ function LoginForm() {
         </CardHeader>
 
         <CardContent className="flex flex-col gap-4 items-center">
+          {error && (
+            <div className="w-full p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {error}
+            </div>
+          )}
+
           <div className="flex justify-center w-full">
             <GoogleLogin
-              onSuccess={(credentialResponse) => {
-                const decoded = jwtDecode(credentialResponse.credential);
-                login(decoded);
-                navigate("/", { replace: true });
+              onSuccess={async (credentialResponse) => {
+                try {
+                  const decoded = jwtDecode(credentialResponse.credential);
+                  console.log("Google user:", decoded);
+
+                  const userData = {
+                    email: decoded.email,
+                    name: decoded.name,
+                    id: decoded.sub,
+                    picture: decoded.picture,
+                    role: 'user'
+                  };
+
+                  login(userData);
+                  navigate("/", { replace: true });
+                } catch (error) {
+                  console.error("Google login error:", error);
+                  setError("Google login failed. Please try again.");
+                }
               }}
-              onError={() => console.log("Google login failed")}
+              onError={() => {
+                console.log("Google login failed");
+                setError("Google login failed. Please try again.");
+              }}
             />
           </div>
 
           <Separator className="my-2 w-full" />
 
           <form onSubmit={handleSubmit} className="space-y-4 w-full">
+            {/* <div className="flex flex-col space-y-1">
+              <Label htmlFor="role">Role</Label>
+              <Select value={role} onValueChange={setRole}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div> */}
             <div className="flex flex-col space-y-1">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email *</Label>
               <Input
                 id="email"
                 type="email"
@@ -73,11 +146,12 @@ function LoginForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full"
+                required
               />
             </div>
 
             <div className="flex flex-col space-y-1">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Password *</Label>
               <Input
                 id="password"
                 type="password"
@@ -85,27 +159,25 @@ function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full"
+                required
               />
             </div>
 
-            <Button type="submit" className="w-full mt-2">
-              Login
+            <Button type="submit" className="w-full mt-2" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
           </form>
 
-          <p className="text-xs text-gray-500 mt-2">
-            Demo user → <b>{STATIC_USER.email}</b> / <b>{STATIC_USER.password}</b>
-          </p>
         </CardContent>
 
-        {/* <CardFooter className="flex justify-center">
+        <CardFooter className="flex justify-center">
           <p className="text-sm sm:text-base text-gray-600 text-center">
             Don’t have an account?{" "}
             <Link to="/signup" className="text-blue-600 font-semibold hover:underline">
               Create one
             </Link>
           </p>
-        </CardFooter> */}
+        </CardFooter>
       </Card>
     </div>
   );

@@ -18,6 +18,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/Components/ui/tooltip"
+import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 
 function Player({
@@ -25,17 +26,73 @@ function Player({
     audioRef,
     isPlaying,
     setIsPlaying,
-    // isMuted,
     next,
     prev,
     handlePlay,
     handlePausePlay,
     handleReplay,
-    // handleMute,
+    handleMute,
     handleRepeted,
-    loop
+    loop,
 }) {
     const { t } = useTranslation()
+
+    useEffect(() => {
+        const onKey = (e) => {
+            // Ignore if user is typing in an input or textarea
+            const target = e.target || e.srcElement
+            const tag = target.tagName
+            if (tag === "INPUT" || tag === "TEXTAREA" || target.isContentEditable) return
+
+            // Spacebar -> play/pause
+            if (e.code === "Space") {
+                e.preventDefault()
+                handlePausePlay && handlePausePlay()
+                return
+            }
+
+            // M -> mute/unmute
+            if (e.key === "m" || e.key === "M") {
+                handleMute && handleMute()
+                return
+            }
+
+            // Arrow keys for skip
+            if (e.code === "ArrowRight") {
+                // skip forward 10s
+                handlePlay && handlePlay(10)
+                return
+            }
+            if (e.code === "ArrowLeft") {
+                // skip back 10s
+                handlePlay && handlePlay(-10)
+                return
+            }
+
+            // n -> next, p -> previous
+            if (e.key === "n" || e.key === "N") {
+                next && next()
+                return
+            }
+            if (e.key === "p" || e.key === "P") {
+                prev && prev()
+                return
+            }
+
+            // r -> toggle repeat, 0 -> replay
+            if (e.key === "r" || e.key === "R") {
+                handleRepeted && handleRepeted()
+                return
+            }
+            if (e.key === "0") {
+                handleReplay && handleReplay()
+                return
+            }
+        }
+
+        window.addEventListener("keydown", onKey)
+        return () => window.removeEventListener("keydown", onKey)
+    }, [handlePausePlay, handleMute, handlePlay, next, prev, handleRepeted, handleReplay])
 
     return (
         <Card
@@ -44,10 +101,10 @@ function Player({
         >
             <CardContent className="flex flex-col items-center justify-center anek-gujarati">
                 <h2 className="text-lg pt-2 md:text-2xl lg:text-2xl font-semibold text-center sm:-pb-4 md:mt-2">
-                    {t(current.title)}
+                    {current.title}
                 </h2>
 
-                {current.url ? (
+                {current.path ? (
                     <audio
                         ref={audioRef}
                         onPlay={() => setIsPlaying(true)}
@@ -55,7 +112,7 @@ function Player({
                         onEnded={next}
                         controls
                         autoPlay
-                        src={current.url}
+                        src={`http://localhost:5000${current.path}`}
                         className="w-full max-w-md"
                     />
                 ) : (
@@ -67,11 +124,12 @@ function Player({
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Button
+                                    className="bg-blue-400 hover:bg-blue-500"
                                     variant={loop ? "default" : "outline"}
                                     size="icon"
                                     onClick={handleRepeted}
                                 >
-                                    <Repeat className={`h-5 w-5 ${loop ? "text-green-500" : ""}`} />
+                                    <Repeat className={`h-5 w-5 ${loop ? "text-black-900" : ""}`} />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -81,7 +139,7 @@ function Player({
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="outline" size="icon" onClick={prev}>
+                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={prev}>
                                     <SkipBack className="h-5 w-5" />
                                 </Button>
                             </TooltipTrigger>
@@ -92,7 +150,7 @@ function Player({
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="outline" size="icon" onClick={() => handlePlay(-10)}>
+                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={() => handlePlay(-10)}>
                                     <StepBack className="h-5 w-5" />
                                 </Button>
                             </TooltipTrigger>
@@ -103,7 +161,7 @@ function Player({
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="default" size="icon" onClick={handlePausePlay}>
+                                <Button className="bg-blue-400 hover:bg-blue-500" variant="default" size="icon" onClick={handlePausePlay}>
                                     {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
                                 </Button>
                             </TooltipTrigger>
@@ -114,7 +172,7 @@ function Player({
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="outline" size="icon" onClick={() => handlePlay(10)}>
+                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={() => handlePlay(10)}>
                                     <StepForward className="h-5 w-5" />
                                 </Button>
                             </TooltipTrigger>
@@ -125,7 +183,7 @@ function Player({
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="outline" size="icon" onClick={next}>
+                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={next}>
                                     <SkipForward className="h-5 w-5" />
                                 </Button>
                             </TooltipTrigger>
@@ -136,7 +194,7 @@ function Player({
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="outline" size="icon" onClick={handleReplay}>
+                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={handleReplay}>
                                     <RotateCcw className="h-5 w-5" />
                                 </Button>
                             </TooltipTrigger>
