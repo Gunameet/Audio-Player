@@ -15,7 +15,13 @@ function Profile() {
 
     useEffect(() => {
         const auth = localStorage.getItem("auth")
-        const storedUser = JSON.parse(localStorage.getItem("user"))
+        let storedUser = null
+        try {
+            const raw = localStorage.getItem("user")
+            if (raw && raw !== "undefined") storedUser = JSON.parse(raw)
+        } catch {
+            storedUser = null
+        }
 
         if (auth !== "true" || !storedUser) {
             navigate("/login", { replace: true })

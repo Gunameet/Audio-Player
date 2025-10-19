@@ -2,19 +2,21 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
-const STATIC_USER = {
-    email: "Akshardham@gmail.com",
-    password: "Akshardham@123",
-    name: "BAPS Swaminarayan Akshardham",
-};
-
 export function AuthProvider({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
 
     useEffect(() => {
         const auth = localStorage.getItem("auth");
-        const storedUser = JSON.parse(localStorage.getItem("user"));
+        let storedUser = null;
+        try {
+            const raw = localStorage.getItem("user");
+            if (raw && raw !== "undefined") storedUser = JSON.parse(raw);
+        } catch {
+            // invalid JSON in storage, ignore and treat as not logged in
+            storedUser = null;
+        }
+
         if (auth === "true" && storedUser) {
             setIsLoggedIn(true);
             setUser(storedUser);
@@ -37,7 +39,7 @@ export function AuthProvider({ children }) {
 
     return (
         <AuthContext.Provider
-            value={{ isLoggedIn, user, login, logout, STATIC_USER }}
+            value={{ isLoggedIn, user, login, logout }}
         >
             {children}
         </AuthContext.Provider>

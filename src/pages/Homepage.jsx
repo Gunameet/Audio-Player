@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import axios from "axios"
 // import { io } from "socket.io-client"
 
+// Small animated equalizer bars used as a playing indicator
 import {
     Accordion,
     AccordionContent,
@@ -13,6 +14,20 @@ import {
 import { Card, CardContent } from "@/Components/ui/card"
 import { TypographyH3 } from "@/Components/ui/typography"
 
+const Equalizer = ({ className = "w-6 h-6 text-current" }) => (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+        <rect x="3" y="6" width="3" height="12" rx="1" className="eq-bar eq-delay-0" />
+        <rect x="10.5" y="4" width="3" height="16" rx="1" className="eq-bar eq-delay-1" />
+        <rect x="18" y="8" width="3" height="12" rx="1" className="eq-bar eq-delay-2" />
+        <style>{`
+                .eq-bar{fill:currentColor;transform-origin:center;}
+                .eq-delay-0{animation:eq 900ms infinite ease-in-out;}
+                .eq-delay-1{animation:eq 700ms infinite ease-in-out;}
+                .eq-delay-2{animation:eq 1100ms infinite ease-in-out;}
+                @keyframes eq{0%{transform:scaleY(.3)}50%{transform:scaleY(1)}100%{transform:scaleY(.3)}}
+            `}</style>
+    </svg>
+)
 export default function Homepage() {
     const { t } = useTranslation()
     const [currentCategory, setCurrentCategory] = useState("DailyRituals")
@@ -153,12 +168,17 @@ export default function Homepage() {
                 }`}
         >
             <CardContent className="flex items-center justify-center h-40 text-center">
-                <p
-                    className={`font-semibold text-lg ${isActive ? "text-blue-600" : "text-gray-800"
-                        }`}
-                >
-                    {track.title}
-                </p>
+                <div className="flex items-center gap-3">
+                    {isActive && isPlaying && (
+                        <Equalizer className="w-6 h-6 text-blue-600" />
+                    )}
+                    <p
+                        className={`font-semibold text-lg ${isActive ? "text-blue-600" : "text-gray-800"
+                            }`}
+                    >
+                        {track.title}
+                    </p>
+                </div>
             </CardContent>
         </Card>
     )
@@ -219,7 +239,12 @@ export default function Homepage() {
                                                 : "bg-white "
                                                 }`}
                                         >
-                                            <p className=" anek-gujarati">{track.title}</p>
+                                            <div className="flex items-center gap-3">
+                                                {currentCategory === category && currentIndex === index && isPlaying && (
+                                                    <Equalizer className="w-5 h-5 text-blue-600" />
+                                                )}
+                                                <p className=" anek-gujarati">{track.title}</p>
+                                            </div>
                                         </Card>
                                     ))}
                                 </div>

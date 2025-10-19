@@ -155,40 +155,71 @@ export default function AdminDashboard() {
 
                     <div>
                         <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Upload Audio</h3>
-                        <div className="w-full flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch">
-                            <Input
-                                type="text"
-                                placeholder="Enter title"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                className="w-full sm:flex-1 text-xs sm:text-sm"
-                            />
+                        <div>
+                            <div className="w-full flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch">
 
-                            <Select value={category} onValueChange={(v) => setCategory(v)}>
-                                <SelectTrigger className="w-full sm:w-48 text-xs sm:text-sm">
-                                    <SelectValue placeholder="Category" />
-                                </SelectTrigger>
-                                <SelectContent defaultValue="DailyRituals">
-                                    <SelectItem value="DailyRituals">DailyRituals</SelectItem>
-                                    <SelectItem value="Thal">Thal</SelectItem>
-                                    <SelectItem value="Kirtans">Kirtans</SelectItem>
-                                    <SelectItem value="Prabhatiya">Prabhatiya</SelectItem>
-                                    <SelectItem value="Katha">Katha</SelectItem>
-                                    <SelectItem value="DevotionalMusic">DevotionalMusic</SelectItem>
-                                </SelectContent>
-                            </Select>
+                                {/* Title Field */}
+                                <div className="flex flex-col w-full sm:flex-1">
+                                    <label htmlFor="title" className="text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                                        Audio Title
+                                    </label>
+                                    <Input
+                                        id="title"
+                                        type="text"
+                                        placeholder="Enter title"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        className="w-full text-xs sm:text-sm"
+                                    />
+                                </div>
 
-                            <input
-                                id="audio-file"
-                                type="file"
-                                accept="audio/*"
-                                onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                                className="w-full sm:flex-1 block text-xs sm:text-sm border rounded px-3 py-2 bg-white"
-                            />
-                            <Button className="sm:w-auto w-full" onClick={handleUpload} disabled={!selectedFile || uploading}>
-                                {uploading ? "Uploading..." : "Add"}
-                            </Button>
+                                {/* Category Field */}
+                                <div className="flex flex-col w-full sm:w-48">
+                                    <label htmlFor="category" className="text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                                        Category
+                                    </label>
+                                    <Select value={category} onValueChange={(v) => setCategory(v)}>
+                                        <SelectTrigger id="category" className="w-full text-xs sm:text-sm">
+                                            <SelectValue placeholder="Select Category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="DailyRituals">Daily Rituals</SelectItem>
+                                            <SelectItem value="Thal">Thal</SelectItem>
+                                            <SelectItem value="Kirtans">Kirtans</SelectItem>
+                                            <SelectItem value="Prabhatiya">Prabhatiya</SelectItem>
+                                            <SelectItem value="Katha">Katha</SelectItem>
+                                            <SelectItem value="DevotionalMusic">Devotional Music</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                {/* File Upload Field */}
+                                <div className="flex flex-col w-full sm:flex-1">
+                                    <label htmlFor="audio-file" className="text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                                        Audio File
+                                    </label>
+                                    <input
+                                        id="audio-file"
+                                        type="file"
+                                        accept="audio/*"
+                                        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                                        className="w-full block text-xs sm:text-sm border rounded px-3 py-2 bg-white"
+                                    />
+                                </div>
+
+                                {/* Upload Button */}
+                                <div className="flex items-end w-full sm:w-auto">
+                                    <Button
+                                        className="w-full sm:w-auto"
+                                        onClick={handleUpload}
+                                        disabled={!selectedFile || uploading}
+                                    >
+                                        {uploading ? "Uploading..." : "Add"}
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
+
                         <div className="mt-1 text-xs text-gray-500 truncate">
                             {selectedFile ? selectedFile.name : "No file chosen"}
                         </div>
@@ -221,7 +252,7 @@ export default function AdminDashboard() {
                             <div className="max-h-[60vh] overflow-y-auto">
                                 {files.length > 0 ? (
                                     files.map((file) => {
-                                        const title = file.audio?.title || file.title || file.name || file.filename || "(unnamed)";
+                                        const title = file.title || "(unnamed)";
                                         return (
                                             <div key={file._id || file.id} className="min-w-[340px] grid grid-cols-12 items-center px-2 sm:px-4 py-2 sm:py-3 border-t text-xs sm:text-sm">
                                                 <div className="col-span-7 truncate pr-2 sm:pr-3">{title}</div>
@@ -229,7 +260,7 @@ export default function AdminDashboard() {
                                                 <div className="col-span-2 flex justify-end gap-2">
                                                     <AlertDialog>
                                                         <AlertDialogTrigger asChild>
-                                                            <Button size="sm" variant="destructive">
+                                                            <Button size="md" variant="destructive">
                                                                 Delete
                                                             </Button>
                                                         </AlertDialogTrigger>

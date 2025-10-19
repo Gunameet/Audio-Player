@@ -18,7 +18,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/Components/ui/tooltip"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 
 function Player({
@@ -36,6 +36,18 @@ function Player({
     loop,
 }) {
     const { t } = useTranslation()
+    const [currentTime, setCurrentTime] = useState(0)
+    const [duration, setDuration] = useState(0)
+    const [muted, setMuted] = useState(false)
+
+    // Helpers to operate on the audio element safely
+    const safePlay = () => { try { audioRef.current?.play(); } catch (e) { console.debug('audio play failed', e) } }
+    const safePause = () => { try { audioRef.current?.pause(); } catch (e) { console.debug('audio pause failed', e) } }
+    const seekBy = (seconds) => {
+        if (!audioRef.current) return
+        audioRef.current.currentTime = Math.min(Math.max(0, audioRef.current.currentTime + seconds), audioRef.current.duration || 0)
+        setCurrentTime(audioRef.current.currentTime)
+    }
 
     useEffect(() => {
         const onKey = (e) => {
@@ -94,32 +106,71 @@ function Player({
         return () => window.removeEventListener("keydown", onKey)
     }, [handlePausePlay, handleMute, handlePlay, next, prev, handleRepeted, handleReplay])
 
+    // Wire audio events
+    useEffect(() => {
+        const el = audioRef?.current
+        if (!el) return
+
+        const onTime = () => setCurrentTime(el.currentTime || 0)
+        const onDur = () => setDuration(el.duration || 0)
+
+        el.addEventListener("timeupdate", onTime)
+        el.addEventListener("loadedmetadata", onDur)
+        el.addEventListener("durationchange", onDur)
+
+        return () => {
+            el.removeEventListener("timeupdate", onTime)
+            el.removeEventListener("loadedmetadata", onDur)
+            el.removeEventListener("durationchange", onDur)
+        }
+    }, [audioRef])
+
     return (
         <Card
-            className="fixed bottom-0 left-0 w-full border-t border-gray-300 bg-gray-100 shadow-md z-50"
-
+            className="fixed bottom-0 left-0 w-full border-t border-gray-300 bg-gray-100 shadow-md z-50 safe-area-bottom"
         >
-            <CardContent className="flex flex-col items-center justify-center anek-gujarati">
+            <CardContent className="flex flex-col items-center justify-center anek-gujarati px-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)]">
                 <h2 className="text-lg pt-2 md:text-2xl lg:text-2xl font-semibold text-center sm:-pb-4 md:mt-2">
                     {current.title}
                 </h2>
 
                 {current.path ? (
-                    <audio
-                        ref={audioRef}
-                        onPlay={() => setIsPlaying(true)}
-                        onPause={() => setIsPlaying(false)}
-                        onEnded={next}
-                        controls
-                        autoPlay
-                        src={`http://localhost:5000${current.path}`}
-                        className="w-full max-w-md"
-                    />
+                    <div className="w-full max-w-md pb-3">
+                        <audio
+                            ref={audioRef}
+                            onPlay={() => setIsPlaying(true)}
+                            onPause={() => setIsPlaying(false)}
+                            onEnded={next}
+                            autoPlay
+                            src={`http://localhost:5000${current.path}`}
+                            className="w-full hidden"
+                        />
+
+                        {/* Progress bar */}
+                        <div className="w-full px-2">
+                            <div className="flex items-center gap-2">
+                                <div className="text-xs text-muted-foreground">{new Date(currentTime * 1000).toISOString().substr(14, 5)}</div>
+                                <input
+                                    type="range"
+                                    min={0}
+                                    max={duration || 0}
+                                    value={Math.min(currentTime, duration || 0)}
+                                    onChange={(e) => {
+                                        const val = Number(e.target.value)
+                                        if (audioRef.current) audioRef.current.currentTime = val
+                                        setCurrentTime(val)
+                                    }}
+                                    className="flex-1"
+                                />
+                                <div className="text-xs text-muted-foreground">{duration ? new Date(duration * 1000).toISOString().substr(14, 5) : "00:00"}</div>
+                            </div>
+                        </div>
+                    </div>
                 ) : (
                     <p className="text-sm text-muted-foreground">{t("noAudio")}</p>
                 )}
 
-                <div className="flex flex-wrap justify-center gap-2 md:pb-2">
+                <div className="flex flex-wrap justify-center gap-2 md:pb-2 w-full max-w-lg">
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -139,8 +190,8 @@ function Player({
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={prev}>
-                                    <SkipBack className="h-5 w-5" />
+                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={() => { prev && prev(); }}>
+                                    <SkipBack className="h-6 w-6" />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -150,8 +201,8 @@ function Player({
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={() => handlePlay(-10)}>
-                                    <StepBack className="h-5 w-5" />
+                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={() => seekBy(-10)}>
+                                    <StepBack className="h-6 w-6" />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -161,8 +212,8 @@ function Player({
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button className="bg-blue-400 hover:bg-blue-500" variant="default" size="icon" onClick={handlePausePlay}>
-                                    {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+                                <Button className="bg-blue-400 hover:bg-blue-500" variant="default" size="icon" onClick={() => { if (audioRef.current) { if (audioRef.current.paused) { safePlay(); } else { safePause(); } } }}>
+                                    {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -172,8 +223,8 @@ function Player({
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={() => handlePlay(10)}>
-                                    <StepForward className="h-5 w-5" />
+                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={() => seekBy(10)}>
+                                    <StepForward className="h-6 w-6" />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -183,8 +234,8 @@ function Player({
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={next}>
-                                    <SkipForward className="h-5 w-5" />
+                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={() => { next && next(); }}>
+                                    <SkipForward className="h-6 w-6" />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -194,10 +245,22 @@ function Player({
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={handleReplay}>
+                                <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={() => { if (audioRef.current) { audioRef.current.currentTime = 0; audioRef.current.play(); } }}>
                                     <RotateCcw className="h-5 w-5" />
                                 </Button>
                             </TooltipTrigger>
+
+                            {/* Mute/Unmute */}
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button className="bg-blue-400 hover:bg-blue-500" variant="outline" size="icon" onClick={() => { if (!audioRef.current) return; audioRef.current.muted = !audioRef.current.muted; setMuted(audioRef.current.muted); }}>
+                                        {muted ? <VolumeX className="h-6 w-6" /> : <Volume2 className="h-6 w-6" />}
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>{muted ? t("unmute") : t("mute")}</p>
+                                </TooltipContent>
+                            </Tooltip>
                             <TooltipContent>
                                 <p>{t("replay")}</p>
                             </TooltipContent>

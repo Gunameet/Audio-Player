@@ -11,7 +11,14 @@ function Header() {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem("user"));
+        let storedUser = null;
+        try {
+            const raw = localStorage.getItem("user");
+            if (raw && raw !== "undefined") storedUser = JSON.parse(raw);
+        } catch {
+            storedUser = null;
+        }
+
         const auth = localStorage.getItem("auth");
         if (auth === "true" && storedUser) {
             setUser(storedUser);
